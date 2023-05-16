@@ -1,5 +1,6 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
+const mysql2 = require('mysql2');
 
 // Function to start the application and prompt for user input
 function startApp() {

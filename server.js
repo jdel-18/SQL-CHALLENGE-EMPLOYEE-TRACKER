@@ -1,14 +1,38 @@
 const express = require('express');
+const mysql = require('mysql2');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+
+const connection = mysql2.createConnection({
+  host: 'localhost', 
+  user: 'root', 
+  password: 'password', 
+  database: 'cms' 
+});
+
+
 connection.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to the MySQL database.');
+  if (err) throw err;
+  console.log('Connected to the MySQL database.');
+
   
-    // Call the function to start the application
-    startApp();
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
+});
+
+
+app.get('/departments', (req, res) => {
   
-  
+  const query = 'SELECT * FROM departments';
+
+  connection.query(query, (error, results) => {
+    if (error) throw error;
+
+    
+    res.json(results);
+  });
+});
+
