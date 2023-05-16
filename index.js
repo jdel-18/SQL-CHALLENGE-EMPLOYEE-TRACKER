@@ -2,7 +2,7 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const mysql2 = require('mysql2');
 
-// Function to start the application and prompt for user input
+
 function startApp() {
     inquirer
       .prompt([
@@ -47,13 +47,12 @@ function startApp() {
             break;
           case 'Exit':
             console.log('Goodbye!');
-            connection.end(); // Close the database connection
+            connection.end();
             break;
         }
       });
   }
   
-  // Function to view all departments
   function viewDepartments() {
     connection.query('SELECT * FROM departments', (err, res) => {
       if (err) throw err;
@@ -63,7 +62,6 @@ function startApp() {
     });
   }
   
-  // Function to view all roles
   function viewRoles() {
     const query = `
     SELECT roles.id, roles.title, departments.name AS department, roles.salary
@@ -78,7 +76,6 @@ function startApp() {
     });
   }
   
-  // Function to view all employees
   function viewEmployees() {
     const query = `
     SELECT employees.id, employees.first_name, employees.last_name,
@@ -97,5 +94,32 @@ function startApp() {
     });
   }
   
-  // Function to add a department
-  function addDepartment() 
+  function addDepartment() {
+    inquirer
+      .prompt([
+        {
+          name: 'departmentName',
+          type: 'input',
+          message: 'Enter the name of the department:',
+          validate: function (input) {
+            if (input.trim() === '') {
+              return 'Department name cannot be empty.';
+            }
+            return true;
+          },
+        },
+      ])
+      .then((answer) => {
+        const departmentName = answer.departmentName;
+  
+        connection.query(
+          'INSERT INTO departments (name) VALUES (?)',
+          [departmentName],
+          (err, res) => {
+            if (err) throw err;
+            console.log(`Department '${departmentName}' added successfully!\n`);
+            startApp();
+          }
+        );
+      });
+  }
